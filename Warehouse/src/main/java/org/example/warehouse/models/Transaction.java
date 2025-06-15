@@ -3,6 +3,8 @@ package org.example.warehouse.models;
 import jakarta.persistence.*;
 import lombok.*;
 import org.example.warehouse.enums.Unit;
+import org.hibernate.annotations.Type;
+
 
 import java.math.BigDecimal;
 import java.time.OffsetDateTime;
@@ -26,7 +28,7 @@ public class Transaction {
     private BigDecimal quantity;
 
     @Enumerated(EnumType.STRING)
-    @Column(nullable = false, length = 16)
+    @Column(nullable = false, columnDefinition = "unit_type")
     private Unit unit;
 
     @Column(nullable = false, precision = 10, scale = 2)

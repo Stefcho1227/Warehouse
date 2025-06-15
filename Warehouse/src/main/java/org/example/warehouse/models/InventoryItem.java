@@ -29,7 +29,7 @@ public class InventoryItem {
     private BigDecimal unitPrice;
 
     @Enumerated(EnumType.STRING)
-    @Column(nullable = false, length = 16)
+    @Column(nullable = false, columnDefinition = "unit_type")
     private Unit unit;
 
     @Column(nullable = false, precision = 14, scale = 3)

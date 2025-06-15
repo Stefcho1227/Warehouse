@@ -14,6 +14,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
+import java.time.OffsetDateTime;
 import java.util.List;
 
 @Service
@@ -35,7 +36,7 @@ public class TransactionServiceImpl implements TransactionService {
                 .toList();
     }
     @Transactional
-    public List<TransactionOutDTO> patchTransaction(Long originalId, TransactionInDTO fixTransaction) {
+    public List<TransactionOutDTO> patchTransaction(Long originalId, PatchTransactionInDTO fixTransaction) {
         Transaction original = transactionRepository.findById(originalId)
                 .orElseThrow(() -> new EntityNotFoundException("Transaction not found"));
         Transaction compensation = transactionRepository.save(
@@ -67,6 +68,7 @@ public class TransactionServiceImpl implements TransactionService {
                 .unit(dto.unit())
                 .unitPrice(dto.unitPrice())
                 .warehouseName(dto.warehouseName())
+                .createdAt(OffsetDateTime.now())
                 .build());
         applyToInventory(transaction);
         return transaction;
