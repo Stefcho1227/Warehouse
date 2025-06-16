@@ -1,0 +1,2 @@
+ALTER TABLE transactions
+    ADD COLUMN corrected BOOLEAN NOT NULL DEFAULT FALSE;

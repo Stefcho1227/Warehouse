@@ -28,6 +28,21 @@ public class TransactionServiceImpl implements TransactionService {
         this.inventoryRepository = inventoryRepository;
         this.transactionMapper = transactionMapper;
     }
+
+    @Override
+    public List<TransactionOutDTO> getAll() {
+        return transactionRepository.findAll().stream()
+                .map(transactionMapper::toDto)
+                .toList();
+    }
+
+    @Override
+    public TransactionOutDTO getById(Long id) {
+        Transaction transaction = transactionRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("Transaction not found"));
+        return transactionMapper.toDto(transaction);
+    }
+
     @Transactional
     public List<TransactionOutDTO> createTransactions(List<TransactionInDTO> request) {
         return request.stream()
@@ -39,11 +54,15 @@ public class TransactionServiceImpl implements TransactionService {
     public List<TransactionOutDTO> patchTransaction(Long originalId, PatchTransactionInDTO fixTransaction) {
         Transaction original = transactionRepository.findById(originalId)
                 .orElseThrow(() -> new EntityNotFoundException("Transaction not found"));
+        if(original.isCorrected()){
+            throw new IllegalStateException("This transaction has already been corrected.");
+        }
+        original.setCorrected(true);
         Transaction compensation = transactionRepository.save(
                 original.toBuilder()
                         .id(null)
                         .quantity(original.getQuantity().negate())
-                        .createdAt(null)
+                        .createdAt(OffsetDateTime.now())
                         .build());
         applyToInventory(compensation);
         Transaction corrected = transactionRepository.save(Transaction.builder()
@@ -57,6 +76,7 @@ public class TransactionServiceImpl implements TransactionService {
                                 original.getUnitPrice())
                         .warehouseName(fixTransaction.warehouseName() != null ? fixTransaction.warehouseName() :
                                 original.getWarehouseName())
+                        .createdAt(OffsetDateTime.now())
                         .build());
         applyToInventory(corrected);
         return List.of(transactionMapper.toDto(compensation), transactionMapper.toDto(corrected));

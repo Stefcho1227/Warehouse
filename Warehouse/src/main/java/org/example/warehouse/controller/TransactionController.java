@@ -18,6 +18,14 @@ public class TransactionController {
     public TransactionController(TransactionService service) {
         this.service = service;
     }
+    @GetMapping
+    public ResponseEntity<List<TransactionOutDTO>> getAll() {
+        return ResponseEntity.ok(service.getAll());
+    }
+    @GetMapping("/{id}")
+    public ResponseEntity<TransactionOutDTO> getById(@PathVariable Long id) {
+        return ResponseEntity.ok(service.getById(id));
+    }
     @PostMapping
     public ResponseEntity<List<TransactionOutDTO>> create(@RequestBody @Valid List<TransactionInDTO> transactions) {
         return ResponseEntity.ok(service.createTransactions(transactions));

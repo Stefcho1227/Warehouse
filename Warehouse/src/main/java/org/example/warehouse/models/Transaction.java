@@ -3,7 +3,6 @@ package org.example.warehouse.models;
 import jakarta.persistence.*;
 import lombok.*;
 import org.example.warehouse.enums.Unit;
-import org.hibernate.annotations.Type;
 
 
 import java.math.BigDecimal;
@@ -39,4 +38,8 @@ public class Transaction {
 
     @Column(nullable = false)
     private OffsetDateTime createdAt = OffsetDateTime.now();
+
+    @Column(nullable = false)
+    private boolean corrected = false;
+
 }
