@@ -6,12 +6,14 @@ import org.example.warehouse.dtos.in.TransactionInDTO;
 import org.example.warehouse.dtos.out.TransactionOutDTO;
 import org.example.warehouse.service.contracts.TransactionService;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
 @RestController
 @RequestMapping("/api/v2/transactions")
+@Validated
 public class TransactionController {
     private final TransactionService service;
 
@@ -27,7 +29,7 @@ public class TransactionController {
         return ResponseEntity.ok(service.getById(id));
     }
     @PostMapping
-    public ResponseEntity<List<TransactionOutDTO>> create(@RequestBody @Valid List<TransactionInDTO> transactions) {
+    public ResponseEntity<List<TransactionOutDTO>> create(@RequestBody @Valid List<@Valid TransactionInDTO> transactions) {
         return ResponseEntity.ok(service.createTransactions(transactions));
     }
     @PatchMapping("/{id}")
